@@ -1,1 +1,0 @@
-﻿package notify_wechat
