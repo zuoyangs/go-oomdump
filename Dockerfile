@@ -1,4 +1,4 @@
-﻿FROM registry.cn-hangzhou.aliyuncs.com/mw5uk4snmsc/openjdk:8u212-jdk-alpine as builder
+FROM registry.cn-hangzhou.aliyuncs.com/mw5uk4snmsc/openjdk:8u212-jdk-alpine as builder
 
 # 修改时区以及安装语言包
 RUN apk add --no-cache tzdata && \
@@ -26,6 +26,20 @@ RUN mkdir -pv /usr/local/go/release/ && \
     cp -rf go-oomdump /opt/ && \
     cd /opt
 
+
+FROM registry.cn-hangzhou.aliyuncs.com/mw5uk4snmsc/openjdk:8u212-jdk-alpine
+
+# 修改时区以及安装语言包
+RUN apk add --no-cache tzdata && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apk del tzdata && \
+    rm -rf /var/cache/apk/*
+
+WORKDIR /opt
+
+COPY --from=builder /opt/oom-example-1.0-SNAPSHOT.jar .
+COPY --from=builder /opt/go-oomdump-proj/go-oomdump .
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
