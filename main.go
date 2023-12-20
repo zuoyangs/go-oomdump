@@ -19,7 +19,13 @@ func upload(wg *sync.WaitGroup, c *cos.Client, files <-chan string) {
 	for file := range files {
 		now := time.Now()
 		formattedDate := now.Format("2006.01.02-15.04.05")
-		name := "Shopping_Cart" + "/" + formattedDate + "/" + file
+
+		APP_NAME := os.Getenv("APP_NAME")
+		if APP_NAME == "" {
+			APP_NAME = "DEFAULT_APP" // 默认值，以防环境变量未设置
+		}
+		name := APP_NAME + "/" + formattedDate + "/" + file
+
 		fd, err := os.Open(file)
 		if err != nil {
 			//ERROR
